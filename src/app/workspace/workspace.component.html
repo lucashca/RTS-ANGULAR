@@ -1,0 +1,88 @@
+
+
+<div class="content" role="main">
+  
+    <div class="options">
+        <div class="card-container" >
+            <div class="card card-small" (click)="addTask()" tabindex="0">
+                    <mat-icon class="iconStyle">done</mat-icon>
+            
+            <span>New Task</span>
+            </div>
+        
+        </div>
+        <div class="card-container">
+            <div class="card card-small" (click)="getBestLargerCycle()" tabindex="0">
+                    <mat-icon class="iconStyle">play_arrow</mat-icon>
+            
+                <span>Run</span>
+            </div>
+        
+        </div>
+        
+        <div *ngIf="largerCycle" class="card-container">
+            <div class="card-info" (click)="selection.value = 'component'" tabindex="0">
+                    <span> Larger Cycle - {{largerCycle}} </span>
+            </div>        
+        </div>
+        <div *ngIf="smallerCycle" class="card-container ">
+                <div class="card-info" (click)="selection.value = 'component'" tabindex="0">
+                        <span> Smaller Cycle - {{smallerCycle}} </span>
+                </div>        
+            </div>
+     
+        
+    </div>
+    
+    <div class="row row-painel">
+
+        <div class="column col-space-2 painel ">
+            <div class="taskPool">
+                <div *ngFor="let t of tasks; let i = index" class="task" [ngClass]="(t.valid)?'valid':'error'" (click)="openDialog(i)"> {{t.name}} </div>
+            </div>
+        </div>
+        <div class="column ">
+            <div class="task-data">
+                <table *ngIf="tasks.length > 0" class="task-table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Period</th>
+                        <th>Runtime</th>
+                        <th>Dependencies</th>
+                        <th>Max. Jitter</th>
+                        <th>Min. Range</th>
+                        <th>Max. Range</th>
+                    </tr>
+                    <tr *ngFor="let t of tasks; let i = index">
+                        <td>{{t.name}}</td>
+                        <td>{{t.period}}</td>
+                        <td>{{t.runtime}}</td>
+                        <td>{{t.dep}}</td>
+                        <td>{{t.maxJitter}}</td>
+                        <td>{{t.minRange}}</td>
+                        <td>{{t.maxRange}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    
+    <div #scrollConsole class="console">
+        <div *ngFor="let l of log" class="logMsg" [ngClass]="l.logClass">
+            {{l.date}} - RTS says: {{l.msg}}
+        </div>
+    </div>
+
+   
+  </div>
+  
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+  <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
+  <!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+  <!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+  <!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+  
+  

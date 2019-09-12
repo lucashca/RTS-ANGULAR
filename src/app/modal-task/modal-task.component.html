@@ -1,0 +1,48 @@
+
+<div class="titleBar">Task - {{task.name}}</div>
+   
+<div class="content">
+
+    <div class="row">
+        
+        <mat-form-field class="column ">
+            <input matInput placeholder="Period" type="number" [(ngModel)]="task.period" name ="period">
+        </mat-form-field>
+        <mat-form-field class="column">
+            <input matInput placeholder="Runtime" type="number"  [(ngModel)]="task.runtime"  name ="runtime">
+        </mat-form-field>      
+    </div>
+
+    <div class="row">
+        <mat-form-field class="column">
+            <input matInput placeholder="Dependencies" type="number"  [(ngModel)]="task.dep"  name ="dep">
+        </mat-form-field>
+        <mat-form-field class="column ">
+            <input matInput placeholder="Max. Jitter" type="number" [(ngModel)]="task.maxJitter"  name ="maxJitter">
+        </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field class="column ">
+        <input matInput placeholder="Min. Range" type="number" [(ngModel)]="task.minRange"  name ="minRange">
+      </mat-form-field>
+      <mat-form-field class="column">
+            <input matInput placeholder="Max. Range" type="number" [(ngModel)]="task.maxRange"  name ="maxRange">
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+        <div class="card-container column"  (click)="onCancel()"  >
+            <div class="card card-small" style="width: 75%">
+            <mat-icon class="iconStyle">cancel</mat-icon>
+            <span> Cancel</span>
+            </div>
+        
+        </div>
+        <div class="card-container column" (click)="onConfirm()">
+            <div class="card card-small"   style="width: 75%">
+                <mat-icon class="iconStyle">done</mat-icon>
+                <span>Confirm</span>
+            </div>
+        </div>
+    </div>
+</div>
