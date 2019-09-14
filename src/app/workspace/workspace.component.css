@@ -50,7 +50,7 @@
     border-radius: 5px;
   }
   .console{
-    height: 30%;
+    height: 10%;
     padding: 10px;
     border-radius: 5px;
     background-color: #060314;
@@ -88,6 +88,19 @@
       line-height: 24px;
       box-shadow: -2px 2px 2px 2px #aaaaaa;
   }
+
+  .task-last{
+    color: #abf862;
+  }
+  .task-timeline{
+    background-color: #0a2541;
+    color: #eeeeee;
+  }
+  .task-combination{
+    height:10px;
+    width: 25px;
+  }
+
 
   .valid{
     background-color: #00b6ad;
@@ -176,7 +189,7 @@
     color:#ffffff;
     font-weight: 600;
     height: 16px;
-    width: 200px;
+    width: 140px;
     padding: 16px;
     display: flex;
     flex-direction: row;

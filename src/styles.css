@@ -77,7 +77,7 @@
 }
 .row-painel{
   margin-bottom: 15px;
-  height: 50%;
+  height: 90%;
 }
 .column {
     display: flex;
@@ -107,7 +107,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 16px;
+    margin: 10px;
   }
 
   .card {
@@ -131,7 +131,7 @@
 
   .card.card-small {
     height: 16px;
-    width: 168px;
+    width: 120px;
   }
 
   .card-container .card:not(.highlight-card) {
