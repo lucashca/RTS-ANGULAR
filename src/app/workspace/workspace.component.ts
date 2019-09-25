@@ -6,6 +6,7 @@ import { ModalTaskComponent } from '../modal-task/modal-task.component';
 import { Task } from '../class/task';
 import {formatDate} from '@angular/common';
 import { GeneticAlgoritm } from './geneticAlgoritm';
+import { TouchSequence } from 'selenium-webdriver';
 
 
 @Component({
@@ -404,169 +405,112 @@ export class WorkspaceComponent implements OnInit,AfterViewChecked {
 
 
   run(){
-      this.getBestLargerCycle()
-    
+    this.getBestLargerCycle();
+    this.getBestCombinationForSchedule();
+    //this.createBestCombination();  
   }
 
-shurffle(arr,num){
-            for( var i = 0; i < num; i++){
-                var j = Math.floor(Math.random()*arr.length);
-                var k = Math.floor(Math.random()*arr.length);
-                this.swap(arr,j,k);
-            }
-        
-        }
-        
-        swap(a, i, j) {
-            var temp = a[i];
-            a[i] = a[j];
-            a[j] = temp;
-        }
 
-        
-        resolveAfterXMiliSeconds(x) {
-          return new Promise(resolve => {
-            setTimeout(() => {
-              resolve(x);
-            }, x);
-          });
-        }
+  run2(){
+    this.getBestLargerCycle2();
+  }
+
+
+
+  getBestLargerCycle2(){
+
+  }
+
+
+  shurffle(arr,num){
+      for( var i = 0; i < num; i++){
+          var j = Math.floor(Math.random()*arr.length);
+          var k = Math.floor(Math.random()*arr.length);
+          this.swap(arr,j,k);
+      }        
+  }
+  swap(a, i, j) {
+      var temp = a[i];
+      a[i] = a[j];
+      a[j] = temp;
+  }
+
+  
+  resolveAfterXMiliSeconds(x) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(x);
+      }, x);
+    });
+  }
 
   async getBestCombinationForSchedule(){
-
+    console.log("Get Best Combination");
     this.tasksCombination = this.getAllTaskInCycle(this.tasks,this.smallerCycle,this.largerCycle);
     this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
     this.addLog("Iniciando ...","",'log-info');
-   
-    this.bestJitter - 1;
+    await this.resolveAfterXMiliSeconds(1);
+    this.addLog("Buscando Combinações ...","",'log-info');
+    await this.resolveAfterXMiliSeconds(1); 
+     
     for(let i = 0; i < this.populationSize; i++){
-      await this.resolveAfterXMiliSeconds(0);
+     // await this.resolveAfterXMiliSeconds(0);
       this.shurffle(this.tasksCombination,50)  
       let percent = (i/this.populationSize)*100;
      let msg = i+"/"+this.populationSize+ " " + percent.toFixed(2) +"% - Combination - " + this.tasksCombination;
-     this.changeTopLog(msg,'','log-info');
+     if(percent%10==0){
+      await this.resolveAfterXMiliSeconds(1); 
+      this.changeTopLog(msg,'','log-info');
+     }
      this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
      this.validCombinations =  this.verifyCombinations(this.tasks,this.tasksCombination,this.smallerCycle,this.largerCycle);
    
      if(this.validCombinations){
-       console.log("entrou" + this.bestJitter + " total jitter "+ this.totalJitter)
-
-       if(this.bestJitter < 0 || this.bestJitter > this.totalJitter){
-         console.log("entrou tb")
+      await this.resolveAfterXMiliSeconds(1); 
+        if(this.bestJitter < 0 || this.bestJitter > this.totalJitter){
          this.bestJitter = this.totalJitter;
          this.validCombinations = false;
          this.bestCombination = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
-         console.log(this.bestCombination)
        }
      }
-      /*
-      await setTimeout(()=>{
-
-          this.shurffle(this.tasksCombination,10)  
-           let percent = (i/this.populationSize)*100;
-          let msg = i+"/"+this.populationSize+ " " + percent.toFixed(2) +"% - Combination - " + this.tasksCombination;
-          this.changeTopLog(msg,'','log-info');
-          this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
-          this.validCombinations =  this.verifyCombinations(this.tasks,this.tasksCombination,this.smallerCycle,this.largerCycle);
-        
-          if(this.validCombinations){
-            console.log("entrou" + this.bestJitter + " total jitter "+ this.totalJitter)
-
-            if(this.bestJitter < 0 || this.bestJitter > this.totalJitter){
-              console.log("entrou tb")
-              this.bestJitter = this.totalJitter;
-              this.validCombinations = false;
-              this.bestCombination = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
-              console.log(this.bestCombination)
-            }
-          }
-
-
-    },1000);  
-
-   */
-
     }
-    this.addLog("Verificando combiações","",'log-info');
+    let msg = this.populationSize+"/"+this.populationSize+ " 100% - Combination - " + this.tasksCombination;
+    this.changeTopLog(msg,'','log-info');
     
-    this.addLog(this.tasksCombination,'','log-info');
-  
-
-    /*
-
-    this.tasksCombination = this.getAllTaskInCycle(this.tasks,this.smallerCycle,this.largerCycle);
-    this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
-    this.ga = new GeneticAlgoritm(this.tasksCombination,this.populationSize,0.01);
-    let combinations = this.ga.getPopulation();
-
     this.addLog("Verificando combiações","",'log-info');
     this.addLog(this.tasksCombination,'','log-info');
-
-    let it = 0;
-    for(let c of combinations){
-      if(this.validCombinations){
-        break;
-      }
-
-      if(!this.validCombinations){
-        this.tasksCombination = c;
-        it++;
-  
-        let percent = (it/combinations.length)*100;
-        let msg = it+"/"+combinations.length+ " " + percent.toFixed(2) +"% - Combination - " + c;
-
-        this.changeTopLog(msg,'','log-info');
-        this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
-        this.validCombinations =  this.verifyCombinations(this.tasks,this.tasksCombination,this.smallerCycle,this.largerCycle);
-      
-      }
-      /*
-      setTimeout(()=>{
-        
-        
-      },10)  
-      */
-    
   }
 
   getBestLargerCycle(){
     let newTasks = this.tasks.slice();
-    
     for(let i in newTasks){
-      
       newTasks[i].period = newTasks[i].minRange;
     }
-   let lc = this.getLargerCycle(newTasks);
+    let lc = this.getLargerCycle(newTasks);
 
     this.addLog('Looking for a better longer cycle','getBBestLargerCycle()','log-info');
     this.addLog('Better Larger Cycle: '+this.bestLargerCycle,'getBBestLargerCycle()','log-ok');
     
     this.addLog('Iteration :1 - Larger Cycle: '+lc,'getBBestLargerCycle()','log-info');
     
-
     if(lc < this.bestLargerCycle){
 
-     this.bestLargerCycle = lc;
+      this.bestLargerCycle = lc;
       this.bestTaskCombinatioForLargerCycle = this.tasks.map(x => Object.assign({}, x));
       this.addLog('Better Larger Cycle: '+this.bestLargerCycle,'getBBestLargerCycle()','log-ok');
-    
     }
-
     //this.printPeriods(newTasks);
-    this.mixLargerCycle(newTasks,this.tasks.length - 1,2)
-  
+    this.mixLargerCycle(newTasks,this.tasks.length - 1,2);
+    return true;
   }
 
 
   mixLargerCycle(task,id,iteration){
-    
     let p = task[id].period
     let min =   task[id].minRange
     let max =   task[id].maxRange
-
     let nextId:number; 
     let nextIteration:number;
-
     if(id < task.length - 1){
       nextId = task.length-1;
       nextIteration = iteration;
@@ -574,48 +518,293 @@ shurffle(arr,num){
       nextId = id;
       nextIteration = iteration + 1;
     }
-
     if(p+1 <= max){
       task[id].period = task[id].period + 1;
       let lc = this.getLargerCycle(task);
       let msg = 'Iteration :'+iteration+' - Larger Cycle: '+lc;
       this.changeTopLog(msg,'mixLargerCycle()','log-info');
       if(lc < this.bestLargerCycle){
-     
-     
         this.bestLargerCycle = lc;
         this.bestTaskCombinatioForLargerCycle = this.tasks.map(x => Object.assign({}, x));
-     
         this.addLog('Better Larger Cycle: '+this.bestLargerCycle,'getBBestLargerCycle()','log-ok');
         let msg = 'Iteration :'+iteration+' - Larger Cycle: '+lc;
         this.addLog(msg,'mixLargerCycle()','log-info');
-       
       }
-      //this.printPeriods(task);
-
-    
-    
     }else{
       task[id].period = task[id].minRange;
       nextId = id - 1;
       if(id == 0){
-        
-
         this.tasks = this.bestTaskCombinatioForLargerCycle.map(x => Object.assign({}, x));
-
-        
         this.verifyTasks()
-        this.getBestCombinationForSchedule()
         return;
       }
     }
-    this.mixLargerCycle(task,nextId,nextIteration)
-    setTimeout(() =>{
-    
-    }, 0);
-   
+    return this.mixLargerCycle(task,nextId,nextIteration);
   }
 
 
 
+  createBestCombination(){
+    let createdComb = [];
+    this.tasksCombination = this.getAllTaskInCycle(this.tasks,this.smallerCycle,this.largerCycle);
+    this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
+    
+    for(let time of this.timeLine){
+      createdComb.push(0);
+    }
+    
+    let subCombs = [];
+    for(let id = 0; id < this.tasks.length;id++){
+      const t = this.tasks[id];
+      let comb = this.setPositionForTask(t,id,this.tasksCombination);
+      subCombs.push(comb);
+    }
+    console.log(subCombs);
+    this.mergeCombination(subCombs[1],subCombs[2]);
+  }
+
+  setPositionForTask(t,id,taskCombination){
+    let out = [];
+    let pointer = 0;
+    for(let i of taskCombination){
+      if(i == id){
+        let subs = this.getSubTaskLength(t.runtime,this.smallerCycle);
+        for(let s = 0; s < subs; s++){
+          out[pointer+s] = i;
+        }
+        pointer = this.getNextPointer(pointer,t.period,this.smallerCycle);
+    
+      }
+    }
+    return out;
+  }
+  mergeCombination(combA,combB){
+    let tA = this.tasks[combA[0]];
+    let tB = this.tasks[combB[0]];
+    
+    let jitterA = tA.maxJitter/this.smallerCycle;
+    let jitterB = tB.maxJitter/this.smallerCycle;
+    
+    let out = [];
+    for(let c of combA){
+      out.push(c);
+    }
+
+
+    let id = this.getFirstIdEmpty(out);
+    
+    let subB = this.getSubTaskLength(tB.runtime,this.smallerCycle);
+
+    let oldC = undefined;
+    for(let i = 0; i < combB.length;i++){
+      let c = combB[i];
+      let empty = true;
+      if(oldC == undefined && c != undefined){
+        for(let s = 0; s < subB; s++){
+          if(out[id + s] != undefined){
+            empty = false;
+            console.log("Conflito")
+            break;
+          }
+        }
+      }
+      if(!empty){
+        id--;
+        i--;
+      }else{
+        for(let s = 0; s < subB; s++){
+          out[id+s] = c;
+          i++;
+        }
+        id++;
+       
+      }
+      oldC = c;
+    }
+
+    console.log(combA);
+    console.log(combB);
+    console.log(out);
+  }
+
+  getFirstIdEmpty(comb){
+    for(let i = 0; i< comb.length;i++){
+      if(comb[i] == undefined){
+        return i;
+      }
+    }
+  }
+
+  getNextPointer(pointer,period,smallerCycle){
+    return pointer + period/smallerCycle;
+  }
+  getSubTaskLength(runtime,smallerCycle){
+    let subs = runtime/smallerCycle;
+    if(runtime%smallerCycle != 0){
+      subs = Math.floor(runtime/smallerCycle) + 1;
+    }
+    return subs;
 }
+
+  
+  cloneCombination(combA){
+    let combB;
+    for(let item of combA){
+      combB.push(item);
+    }
+    return combB;
+
+  }
+
+  createBestCombination3(){
+    let createdComb = [];
+
+    this.tasksCombination = this.getAllTaskInCycle(this.tasks,this.smallerCycle,this.largerCycle);
+    this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
+    for(let time of this.timeLine){
+      createdComb.push(0);
+    }
+    let error = false;
+    for(let id = 0; id < this.tasks.length;id++){
+      let t = this.tasks[id];
+      let pointerComb = 0;  
+      let first  = true;
+      error = false;
+      for(let i of this.tasksCombination){
+        if(id == i){     
+          if(first){
+            for(let k = 0; k < createdComb.length; k++){
+                if(!createdComb[k]){
+                  createdComb[k] = id;
+                  pointerComb = k;
+                  let subs = this.getSubTaskLength(t.runtime,this.smallerCycle);
+                  for(let s = 0; s < subs; s++){
+                    createdComb[pointerComb + s] = id;
+                  }
+                  first = false;
+                  break;      
+                }else{
+                  error = true;
+                }
+              }
+          }else{
+            pointerComb = this.getNextPointer(pointerComb,t.period,this.smallerCycle) 
+            if(!createdComb[pointerComb] && pointerComb < createdComb.length){
+              let subs = this.getSubTaskLength(t.runtime,this.smallerCycle);
+              for(let s = 0; s < subs; s++){
+                createdComb[pointerComb + s] = id;
+              }
+            }else{
+              error = true;
+            }
+          }
+        }
+      }
+    }
+    console.log(error)
+    console.log(createdComb)
+    this.subTasks = createdComb;
+
+  }
+  
+
+
+
+
+  createBestCombination2(){
+    let createdComb = [];
+
+    this.tasksCombination = this.getAllTaskInCycle(this.tasks,this.smallerCycle,this.largerCycle);
+    this.subTasks = this.getSubTaskInCycle(this.tasks,this.tasksCombination,this.smallerCycle);
+    this.addLog("Iniciando ...","",'log-info');
+    console.log(this.timeLine)
+    console.log(this.tasksCombination)
+    let error = false;
+    for(let time of this.timeLine){
+      createdComb.push(0);
+    }
+
+    for(let id = 0;id< this.tasks.length;id++){
+      let first = true;
+      let oldTime = -1;
+      let t = this.tasks[id];
+      if(!t.blanck){
+        for(let i of this.tasksCombination){
+          if(i == id){
+            if(first){
+              for(let index = 0; index < createdComb.length; index++){
+                if(!createdComb[index]){
+                  let subs = t.runtime/this.smallerCycle;
+                  if(t.runtime%this.smallerCycle != 0){
+                    subs = Math.floor(t.runtime/this.smallerCycle) + 1;
+                  }
+                  oldTime = index;
+                  for(let j = 0; j < subs;j++){
+                    createdComb[index] = id;
+                    index ++;
+                  }  
+                  break;  
+                }else{
+                  console.log(createdComb[index])
+                  error = true;
+                 
+                }
+              }
+              first = false;
+            }else{
+              if(oldTime != -1){
+                
+                let nextTime = oldTime + t.period/this.smallerCycle;
+                let jitter = t.maxJitter/this.smallerCycle;
+
+                let subs = t.runtime/this.smallerCycle;
+                if(t.runtime%this.smallerCycle != 0){
+                  subs = Math.floor(t.runtime/this.smallerCycle) + 1;
+                }
+                oldTime = nextTime  
+
+               
+                for(let jit = 0; jit < jitter; jit++){
+                  for(let k = 0; k < 2; k ++){
+                    let jitterOffset = jit;
+                    if(k == 0){
+                      jitterOffset = -1*jit;
+                    }
+                    for(let j = 0; j < subs;j++){
+                      error = false;
+                      if(!createdComb[nextTime + jitterOffset]){ 
+                       createdComb[nextTime + jitterOffset] = id;
+                        nextTime ++;
+                      }else{
+                        error = true;
+                      
+                        break;
+                      } 
+                    }
+
+                  }
+                  
+                }
+                 
+              
+              
+            }
+          } 
+          }
+        }
+      }
+
+    }
+
+    this.subTasks = createdComb;
+    console.log(createdComb);
+    console.log("Have error: "+ error)
+
+  }
+
+
+
+
+}
+
+
