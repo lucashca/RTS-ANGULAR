@@ -21,7 +21,7 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
 
 
   ga: GeneticAlgoritm;
-
+  code: string[]
   tasks = [];
   tasksValidation = true;
   msgValidation = '';
@@ -502,7 +502,8 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
   run() {
     this.getBestLargerCycle();
     this.getBestCombinationForSchedule();
-    this.createBestCombination();  
+    this.createBestCombination();
+
   }
 
 
@@ -563,10 +564,12 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
       if (this.validCombinations) {
         await this.resolveAfterXMiliSeconds(1);
         if (this.bestJitter < 0 || this.bestJitter > this.totalJitter) {
+
           this.bestJitter = this.totalJitter;
           this.bestTasksJitter = this.tasksJitter.map((x) => x);
           this.validCombinations = false;
           this.bestCombination = this.getSubTaskInCycle(this.tasks, this.tasksCombination, this.smallerCycle);
+
           console.log(this.bestTasksJitter);
         }
       }
@@ -575,6 +578,7 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
     this.changeTopLog(msg, '', 'log-info');
 
     console.log(this.bestTasksJitter);
+    this.crateCode();
 
   }
 
@@ -653,15 +657,16 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
     let subCombs = [];
     for (let id = 0; id < this.tasks.length; id++) {
       const t = this.tasks[id];
-      if(!t.blanck){
-        let comb = this.setPositionForTask(t, id, this.tasksCombination,this.timeLine.length);
-        subCombs.push(comb);  
+      if (!t.blanck) {
+        let comb = this.setPositionForTask(t, id, this.tasksCombination, this.timeLine.length);
+        subCombs.push(comb);
       }
     }
     console.log(subCombs);
+
   }
 
-  setPositionForTask(t, id, taskCombination,length) {
+  setPositionForTask(t, id, taskCombination, length) {
     let out = this.createArrayOfZeros(length);
     let pointer = 0;
     for (let i of taskCombination) {
@@ -696,6 +701,24 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
     return subs;
   }
 
+
+  crateCode() {
+    this.code = [];
+
+    this.code.push(" while(true) {")
+    let codeOut = "while(true) { \n";
+    for (let s of this.bestCombination) {
+      let t = this.tasks[parseInt(s, 10)]
+      console.log(t.name);
+      this.code.push(t.name + "();")
+      codeOut += t.name + "();\n"
+    }
+
+    this.code.push("}")
+
+    codeOut += "}\n"
+    console.log(this.code);
+  }
 
   cloneCombination(combA) {
     let combB;

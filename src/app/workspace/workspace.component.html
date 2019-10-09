@@ -1,85 +1,87 @@
-
-
 <div class="content" role="main">
-  
+
     <div class="options">
-        <div class="card-container" >
+        <div class="card-container">
             <div class="card card-small" (click)="addTask()" tabindex="0">
-                    <mat-icon class="iconStyle">done</mat-icon>
-            
-            <span>New Task</span>
+                <mat-icon class="iconStyle">done</mat-icon>
+
+                <span>New Task</span>
             </div>
-        
+
         </div>
         <div class="card-container">
             <div class="card card-small" (click)="run()" tabindex="0">
-                    <mat-icon class="iconStyle">play_arrow</mat-icon>
-            
+                <mat-icon class="iconStyle">play_arrow</mat-icon>
+
                 <span>Run</span>
             </div>
-        
+
         </div>
         <div class="card-container">
-                <div class="card card-small" tabindex="0">
-                        <mat-form-field class="column">
-                                <input matInput placeholder="Population" type="number"  [(ngModel)]="populationSize"  name ="runtime">
-                            </mat-form-field>    
+            <div class="card card-small" tabindex="0">
+                <mat-form-field class="column">
+                    <input matInput placeholder="Population" type="number" [(ngModel)]="populationSize" name="runtime">
+                </mat-form-field>
 
-                </div>
-            
             </div>
-        
+
+        </div>
+
         <div *ngIf="largerCycle" class="card-container">
-            <div class="card-info"  tabindex="0">
-                    <span> Larger Cycle - {{largerCycle}} </span>
-            </div>        
+            <div class="card-info" tabindex="0">
+                <span> Larger Cycle - {{largerCycle}} </span>
+            </div>
         </div>
         <div *ngIf="smallerCycle" class="card-container ">
-                <div class="card-info"  tabindex="0">
-                        <span> Smaller Cycle - {{smallerCycle}} </span>
-                </div>        
+            <div class="card-info" tabindex="0">
+                <span> Smaller Cycle - {{smallerCycle}} </span>
             </div>
+        </div>
         <div *ngIf="bestJitter" class="card-container ">
             <div class="card-info" tabindex="0">
-                    <span> Best Jitter - {{bestJitter}} </span>
-            </div>        
+                <span> Best Jitter - {{bestJitter}} </span>
+            </div>
         </div>
         <div *ngIf="totalJitter" class="card-container ">
             <div class="card-info" tabindex="0">
-                    <span> Combination Jitter - {{totalJitter}} </span>
-            </div>        
+                <span> Combination Jitter - {{totalJitter}} </span>
+            </div>
         </div>
-     
-        
+
+
     </div>
-    
+
     <div class="row row-painel">
 
         <div class="column col-space-2 painel ">
             <div class="taskPool">
-                <div *ngFor="let t of tasks; let i = index" class="task" [ngClass]="(t.valid)?'valid':'error'" (click)="openDialog(i)"> {{t.name}} </div>
+                <div *ngFor="let t of tasks; let i = index" class="task" [ngClass]="(t.valid)?'valid':'error'"
+                    (click)="openDialog(i)"> {{t.name}} </div>
             </div>
             <h3>Tasks Combination - (ms)</h3>
             <div class="taskPool">
-                <div *ngFor="let t of tasksCombination; let i = index" class="task task-combination" [ngClass]="(validCombinations)?'valid':'error'" > {{tasks[t].name}} </div>
-            </div>  
+                <div *ngFor="let t of tasksCombination; let i = index" class="task task-combination"
+                    [ngClass]="(validCombinations)?'valid':'error'"> {{tasks[t].name}} </div>
+            </div>
             <h3>TimeLine - (ms)</h3>
             <div class="taskPool">
-                    <div *ngFor="let t of timeLine; let i = index" class="task task-combination task-timeline" > {{t}} </div>
+                <div *ngFor="let t of timeLine; let i = index" class="task task-combination task-timeline"> {{t}} </div>
             </div>
             <h3>Combinations</h3>
-             <div class="taskPool">
-                <div *ngFor="let t of subTasks; let i = index" class="task task-combination" [ngClass]="(validCombinations)?'valid':'error'"> {{tasks[t].name}} </div>
+            <div class="taskPool">
+                <div *ngFor="let t of subTasks; let i = index" class="task task-combination"
+                    [ngClass]="(validCombinations)?'valid':'error'"> {{tasks[t].name}} </div>
             </div>
             <h3>Best Combination</h3>
-             <div class="taskPool">
-                <div *ngFor="let t of bestCombination; let i = index" class="task task-combination valid" > {{tasks[t].name}} </div>
+            <div class="taskPool">
+                <div *ngFor="let t of bestCombination; let i = index" class="task task-combination valid">
+                    {{tasks[t].name}} </div>
             </div>
-            
-            
+
+
         </div>
 
-    <!--
+        <!--
         <div class="column ">
             <div class="task-data">
                 <table *ngIf="tasks.length > 0" class="task-table">
@@ -106,22 +108,23 @@
         </div>
     !-->
     </div>
-    
+
     <div #scrollConsole class="console">
         <div *ngFor="let l of log" class="logMsg" [ngClass]="l.logClass">
             {{l.date}} - RTS says: {{l.msg}}
         </div>
     </div>
 
-   
-  </div>
-  
-  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-  <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-  <!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-  <!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-  <!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-  
-  
+
+</div>
+<div *ngFor="let l of code">
+    {{l}}
+
+</div>
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
