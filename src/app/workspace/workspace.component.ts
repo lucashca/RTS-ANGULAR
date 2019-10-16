@@ -52,37 +52,197 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
 
   tasksJitter = [];
   bestTasksJitter = [];
+
+
+  totalFrame: Number
+  frames = []
+
   constructor(public dialog: MatDialog) { }
 
 
   setTestDataset() {
+    /** 
     this.tasks.push(new Task('B0', true, true, 100, 5, 1, 2, 20, 20))
-    // this.tasks.push(new Task('B1',true,100,5,1,2,20,20))
+    this.tasks.push(new Task('B1',true,100,5,1,2,20,20))
     this.tasks.push(new Task('T1', true, false, 20, 5, 1, 2, 18, 22))
     this.tasks.push(new Task('T2', true, false, 25, 8, 1, 2, 24, 26))
     this.tasks.push(new Task('T3', true, false, 50, 5, 1, 2, 48, 51))
     this.tasks.push(new Task('T4', true, false, 50, 4, 1, 2, 50, 50))
     this.tasks.push(new Task('T5', true, false, 100, 10, 1, 2, 95, 105))
-    /*
     this.tasks.push(new Task('T1',true,20,5,1,2,1,3))
     this.tasks.push(new Task('T1',true,25,5,1,2,1,3))
     this.tasks.push(new Task('T1',true,50,5,1,2,1,3))
     this.tasks.push(new Task('T1',true,50,5,1,2,1,3))
-    this.tasks.push(new Task('T1',true,100,5,1,2,1,3))
+  
+    /*
+    this.tasks.push(new Task("T1", true, false, 14, 1, 1, 14))
+    this.tasks.push(new Task("T2", true, false, 20, 2, 1, 20))
+    this.tasks.push(new Task("T3", true, false, 22, 3, 1, 22))
     */
+    this.tasks.push(new Task("T1", true, false, 10, 1, 1, 10))
+    this.tasks.push(new Task("T2", true, false, 10, 3, 1, 10))
+    this.tasks.push(new Task("T3", true, false, 20, 2, 1, 20))
 
   }
 
   ngOnInit() {
     this.setTestDataset()
-    this.verifyTasks()
+    this.largerCycle = this.getLargerCycle(this.tasks)
+    this.smallerCycle = this.getMinorCycle(this.tasks)
+    this.totalFrame = this.largerCycle / this.smallerCycle
+    this.zerarFrames()
+    console.log(this.frames)
+    //this.verifyTasks()
     /*
     let taskId = [1,2,3,1,2,4,1,0,2,1,3,5,1,2,4];
     let s = this.setTimeLineForTask(this.tasks,taskId,this.smallerCycle);
     let res = this.verifyMaxJitter(this.tasks,s,5,100);
     console.log(res);
     */
+
   }
+
+  zerarFrames() {
+    this.frames = []
+    for (let i = 0; i < this.totalFrame; i++) {
+      let f = []
+      this.frames.push(f)
+    }
+  }
+
+  run() {
+
+    this.createCombination()
+  }
+
+
+
+  async createCombination() {
+    this.tasksCombination = []
+    for (let t of this.tasks) {
+      let qtd = this.largerCycle / t.period
+      for (let i = 0; i < qtd; i++) {
+        this.tasksCombination.push(t);
+      }
+    }
+    for (let i = 0; i < this.populationSize; i++) {
+      await this.resolveAfterXMiliSeconds(2)
+      this.shurffle(this.tasksCombination, 10)
+      this.zerarFrames()
+      this.putOnFrames(this.tasksCombination)
+    }
+  }
+
+
+  contFrameTime(frame) {
+    let total = 0
+    for (let t of frame) {
+      total += t.runtime
+    }
+    return total
+  }
+
+  putOnFrames(combination) {
+    for (let t of combination) {
+      for (let f of this.frames) {
+        let totalTime = this.contFrameTime(f)
+        let freeTime = this.smallerCycle - totalTime
+        if (freeTime > t.runtime) {
+          if (!f.includes(t)) {
+            f.push(t)
+            break;
+          }
+        }
+      }
+    }
+  }
+
+
+  shurffle(arr, num) {
+    for (var i = 0; i < num; i++) {
+      var j = Math.floor(Math.random() * arr.length);
+      var k = Math.floor(Math.random() * arr.length);
+      this.swap(arr, j, k);
+    }
+  }
+  swap(a, i, j) {
+    var temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
+  }
+
+
+
+
+
+
+  getMinorCycle(tasks: any[]) {
+    let taskSize = tasks.length
+    let menorDeadLine = tasks[0].deadline;
+    let maiorRuntime = tasks[0].runtime;
+    let majorCycle = this.getLargerCycle(tasks)
+    console.log(majorCycle)
+    //************************** */
+
+    for (let t of tasks) {
+      //Encontrar o menor deadline
+      if (t.deadline < menorDeadLine) {
+        menorDeadLine = t.deadline
+      }
+      //Encontrar o maior tempo de computacao
+      if (t.runtime > maiorRuntime) {
+        maiorRuntime = t.runtime
+      }
+
+    }
+    //**************************
+
+    //************************** */
+    // 1: m <= di, for i = 1, ... , n
+    let possiveisM = [];
+    for (let i = 1; i <= menorDeadLine; i++) {
+      possiveisM.push(i)
+    }
+    console.log(possiveisM)
+    // 2: must be greater than or equal to the computation time of the longest (sub)action. 
+    let newM = []
+    for (let m of possiveisM) {
+      if (m >= maiorRuntime) {
+        newM.push(m)
+      }
+    }
+    possiveisM = newM
+    console.log(possiveisM)
+    //3: m must divide the major cycle, M. (This is equivalent to requiring that m divide one of the Pi.)
+    newM = []
+    for (let m of possiveisM) {
+      if (majorCycle % m == 0) {
+        newM.push(m)
+      }
+    }
+    possiveisM = newM
+    console.log(possiveisM)
+    //4 : m + (m - gcd(m, Pi)) <- di for i = 1, . . . , n. (This subsumes requirement 1. 
+    newM = []
+
+    for (let m of possiveisM) {
+      let entra = true
+      for (let t of tasks) {
+        let b = m - this.mdc(m, t.period)
+        let a = m + b
+        if (a > t.deadline) {
+          entra = false
+        }
+      }
+      if (entra) {
+        newM.push(m)
+      }
+    }
+    possiveisM = newM
+    console.log(possiveisM)
+    return possiveisM[possiveisM.length - 1]
+  }
+
 
 
 
@@ -499,7 +659,7 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
 
 
 
-  run() {
+  run3() {
     this.getBestLargerCycle();
     this.getBestCombinationForSchedule();
     this.createBestCombination();
@@ -518,18 +678,6 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
   }
 
 
-  shurffle(arr, num) {
-    for (var i = 0; i < num; i++) {
-      var j = Math.floor(Math.random() * arr.length);
-      var k = Math.floor(Math.random() * arr.length);
-      this.swap(arr, j, k);
-    }
-  }
-  swap(a, i, j) {
-    var temp = a[i];
-    a[i] = a[j];
-    a[j] = temp;
-  }
 
 
   resolveAfterXMiliSeconds(x) {

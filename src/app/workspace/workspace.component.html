@@ -58,6 +58,20 @@
                 <div *ngFor="let t of tasks; let i = index" class="task" [ngClass]="(t.valid)?'valid':'error'"
                     (click)="openDialog(i)"> {{t.name}} </div>
             </div>
+            <h3>Schedule - (ms)</h3>
+            <div class="frameBox">
+                <div class="frameBoxItem" *ngFor="let f of frames; index as i">
+                    Frame {{i+1}}: {{(i+1)*smallerCycle}}ms
+                    <div class="frame">
+                        <div class="subFrame" *ngFor="let t of f">{{t.name}}: {{t.runtime}}ms</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!--
             <h3>Tasks Combination - (ms)</h3>
             <div class="taskPool">
                 <div *ngFor="let t of tasksCombination; let i = index" class="task task-combination"
@@ -81,7 +95,7 @@
 
         </div>
 
-        <!--
+     
         <div class="column ">
             <div class="task-data">
                 <table *ngIf="tasks.length > 0" class="task-table">
@@ -106,7 +120,7 @@
                 </table>
             </div>
         </div>
-    !-->
+   
     </div>
 
     <div #scrollConsole class="console">
@@ -114,17 +128,16 @@
             {{l.date}} - RTS says: {{l.msg}}
         </div>
     </div>
+ !-->
 
-
-</div>
-<div *ngFor="let l of code">
-    {{l}}
-
-</div>
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+        </div>
+        <div *ngFor="let l of code">
+            {{l}}
+        </div>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+        <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
+        <!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+        <!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+        <!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
