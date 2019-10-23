@@ -32,6 +32,8 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
 
   smallerCycle: number;
   largerCycle: number;
+  cpuUsage: number;
+
 
   totalJitter = 0;
   tasksCombination = [];
@@ -56,6 +58,8 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
 
   totalFrame: Number
   frames = []
+
+  mainCode = ""
 
   constructor(public dialog: MatDialog) { }
 
@@ -91,14 +95,119 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
     this.smallerCycle = this.getMinorCycle(this.tasks)
     this.totalFrame = this.largerCycle / this.smallerCycle
     this.zerarFrames()
+
+
+
+  }
+
+
+  private setting = {
+    element: {
+      dynamicDownload: null as HTMLElement
+    }
+  }
+
+
+  dynamicDownloadTxt() {
+    this.dyanmicDownloadByHtmlTag({
+      fileName: 'My Report.c',
+      text: this.mainCode
+    });
+  }
+
+
+  private dyanmicDownloadByHtmlTag(arg: {
+    fileName: string,
+    text: string
+  }) {
+    if (!this.setting.element.dynamicDownload) {
+      this.setting.element.dynamicDownload = document.createElement('a');
+    }
+    const element = this.setting.element.dynamicDownload;
+    const fileType = arg.fileName.indexOf('.c') > -1 ? 'text/json' : 'text/plain';
+    element.setAttribute('href', `data:${fileType};charset=utf-8,${encodeURIComponent(arg.text)}`);
+    element.setAttribute('download', arg.fileName);
+
+    var event = new MouseEvent("click");
+    element.dispatchEvent(event);
+  }
+
+
+  createCode() {
     console.log(this.frames)
-    //this.verifyTasks()
+    this.code = []
+    this.mainCode = " int main(){  "
+    this.mainCode += "\n \t int totalFrames = " + this.frames.length + ";"
+    this.mainCode += "\n \t int frame = 0;"
+    this.mainCode += "\n \t int tmr_frame = 0;"
+    this.mainCode += "\n \t while( 2 > 1 ) {"
+    this.mainCode += "\n \t\t while(1){"
+    this.mainCode += "\n \t\t\t if(frame >= totalFrames){"
+    this.mainCode += "\n \t\t\t\t frame = 0;"
+    this.mainCode += "\n \t\t\t }"
+    this.mainCode += "\n \t\t\t switch(frame){"
+
     /*
-    let taskId = [1,2,3,1,2,4,1,0,2,1,3,5,1,2,4];
-    let s = this.setTimeLineForTask(this.tasks,taskId,this.smallerCycle);
-    let res = this.verifyMaxJitter(this.tasks,s,5,100);
-    console.log(res);
+    this.code.push("int main(){")
+    this.code.push("int totalFrames = " + this.frames.length + ";")
+    this.code.push("int frame = 0;")
+    this.code.push("int tmr_frame = 0;")
+    this.code.push("while(1){")
+    this.code.push("if(frame >= totalFrames){")
+    this.code.push("frame = 0;")
+    this.code.push("}")
+    this.code.push("switch(frame){")
     */
+    for (let i = 0; i < this.frames.length; i++) {
+      const element = this.frames[i];
+      //this.code.push("case " + i + " :")
+      this.mainCode += "\n \t\t\t\t case " + i + " :"
+      for (let t of element) {
+        //  this.code.push(t.name + "();")
+        this.mainCode += "\n \t\t\t\t\t " + t.name + "();"
+      }
+      //this.code.push("break;")
+      this.mainCode += "\n \t\t\t\t break;"
+
+    }
+    this.mainCode += "\n \t\t\t\t default:"
+    this.mainCode += "\n \t\t\t\t break;"
+    this.mainCode += "\n \t\t\t }"
+    this.mainCode += "\n \t\t\t frame++"
+    this.mainCode += "\n \t\t\t while(!tmr_frame){"
+    this.mainCode += "\n \t\t\t\t pass;"
+    this.mainCode += "\n \t\t\t }"
+    this.mainCode += "\n \t\t }"
+    this.mainCode += "\n \t }"
+    this.mainCode += "\n \t int_handler(){"
+    this.mainCode += "\n \t\t tmr_frame = 1"
+    this.mainCode += "\n \t }"
+    this.mainCode += "\n }"
+
+    /*
+    this.code.push("default:")
+    this.code.push("break;")
+    this.code.push("}")
+    this.code.push("frame++")
+    this.code.push("while(!tmr_frame){")
+    this.code.push("pass;")
+    this.code.push("}")
+    this.code.push("}")
+
+    this.code.push("int_handler(){")
+    this.code.push("tmr_frame = 1")
+    this.code.push("}")
+
+
+
+    this.code.push("}")
+    */
+
+
+
+
+
+    console.log(this.code)
 
   }
 
@@ -113,6 +222,7 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
   run() {
 
     this.createCombination()
+
   }
 
 
@@ -131,6 +241,18 @@ export class WorkspaceComponent implements OnInit, AfterViewChecked {
       this.zerarFrames()
       this.putOnFrames(this.tasksCombination)
     }
+    this.createCode()
+    this.contCpuUsage()
+  }
+
+  contCpuUsage() {
+    let totalTime = 0;
+    for (let f of this.frames) {
+      for (let t of f) {
+        totalTime += t.runtime
+      }
+    }
+    this.cpuUsage = (this.largerCycle - totalTime) * 100 / this.largerCycle
   }
 
 

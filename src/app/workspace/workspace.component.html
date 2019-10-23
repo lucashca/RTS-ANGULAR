@@ -17,12 +17,20 @@
             </div>
 
         </div>
+
         <div class="card-container">
             <div class="card card-small" tabindex="0">
                 <mat-form-field class="column">
                     <input matInput placeholder="Population" type="number" [(ngModel)]="populationSize" name="runtime">
                 </mat-form-field>
 
+            </div>
+
+        </div>
+        <div *ngIf="mainCode" class="card-container">
+            <div class="card card-small" (click)="dynamicDownloadTxt()" tabindex="0">
+                <mat-icon class="iconStyle">done</mat-icon>
+                <span>Download Code</span>
             </div>
 
         </div>
@@ -39,12 +47,7 @@
         </div>
         <div *ngIf="bestJitter" class="card-container ">
             <div class="card-info" tabindex="0">
-                <span> Best Jitter - {{bestJitter}} </span>
-            </div>
-        </div>
-        <div *ngIf="totalJitter" class="card-container ">
-            <div class="card-info" tabindex="0">
-                <span> Combination Jitter - {{totalJitter}} </span>
+                <span> CPU Usage - {{cpuUsage}}% </span>
             </div>
         </div>
 
@@ -131,9 +134,7 @@
  !-->
 
         </div>
-        <div *ngFor="let l of code">
-            {{l}}
-        </div>
+
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
         <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
         <!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
